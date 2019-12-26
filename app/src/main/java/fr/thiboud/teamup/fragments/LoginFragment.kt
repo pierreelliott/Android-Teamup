@@ -62,7 +62,7 @@ class LoginFragment : Fragment() {
 
     fun onNavigateToChoice(userId: Long) {
         this.findNavController().navigate(
-            LoginFragmentDirections.actionLoginFragmentToChoiceFragment(userId)
+            LoginFragmentDirections.actionLoginFragmentToItemFragment()    //actionLoginFragmentToChoiceFragment(userId)
         )
     }
 

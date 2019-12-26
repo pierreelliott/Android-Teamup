@@ -3,36 +3,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@+id/loginFragment">
 
     <fragment
         android:id="@+id/loginFragment"
         android:name="fr.thiboud.teamup.fragments.LoginFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" >
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_subscriptionFragment"
             app:destination="@id/subscriptionFragment" />
         <action
-            android:id="@+id/action_loginFragment_to_choiceFragment"
-            app:destination="@id/choiceFragment" />
+            android:id="@+id/action_loginFragment_to_itemFragment"
+            app:destination="@id/itemFragment" />
     </fragment>
     <fragment
         android:id="@+id/subscriptionFragment"
         android:name="fr.thiboud.teamup.fragments.SubscriptionFragment"
         android:label="subscription_fragment"
-        tools:layout="@layout/subscription_fragment" >
+        tools:layout="@layout/subscription_fragment">
         <action
-            android:id="@+id/action_subscriptionFragment_to_choiceFragment"
-            app:destination="@id/choiceFragment" />
+            android:id="@+id/action_subscriptionFragment_to_itemFragment"
+            app:destination="@+id/itemFragment" />
     </fragment>
     <fragment
         android:id="@+id/choiceFragment"
         android:name="fr.thiboud.teamup.fragments.ChoiceFragment"
         android:label="choice_fragment"
-        tools:layout="@layout/choice_fragment" >
+        tools:layout="@layout/choice_fragment">
         <argument
             android:name="userId"
             app:argType="long" />
     </fragment>
+    <fragment
+        android:id="@+id/itemFragment"
+        android:name="fr.thiboud.teamup.fragments.ListFragment"
+        android:label="ItemFragment" />
 </navigation>

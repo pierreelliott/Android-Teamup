@@ -7,7 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
+import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.InverseMethod
 import androidx.lifecycle.Observer
@@ -17,6 +19,7 @@ import com.google.android.material.snackbar.Snackbar
 import fr.thiboud.teamup.R
 import fr.thiboud.teamup.database.UserDB
 import fr.thiboud.teamup.databinding.SubscriptionFragmentBinding
+import fr.thiboud.teamup.model.User
 import fr.thiboud.teamup.viewmodel.LoginViewModel
 import fr.thiboud.teamup.viewmodel.SubscriptionViewModel
 import fr.thiboud.teamup.viewmodelfactory.LoginViewModelFactory
@@ -42,6 +45,14 @@ object LongConverter {
         val d = f.parse(value)
         return d.time
     }
+}
+
+@BindingAdapter("userDate")
+fun TextView.setUserDate(item: User) {
+    val date = Date(item.birthdayDate)
+    val f = SimpleDateFormat("dd/MM/yy")
+    val dateText = f.format(date)
+    text = dateText
 }
 
 class SubscriptionFragment : Fragment() {
@@ -86,7 +97,7 @@ class SubscriptionFragment : Fragment() {
 
     fun navigateToLogin(userId: Long) {
         this.findNavController().navigate(
-            SubscriptionFragmentDirections.actionSubscriptionFragmentToChoiceFragment(userId)
+            SubscriptionFragmentDirections.actionSubscriptionFragmentToItemFragment()     //actionSubscriptionFragmentToChoiceFragment(userId)
         )
     }
 
@@ -97,7 +108,7 @@ class SubscriptionFragment : Fragment() {
         val day = c.get(Calendar.DAY_OF_MONTH)
 
         val dpd = DatePickerDialog(binding.root.context, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            viewModel.user.value?.birthdayDate = LongConverter.stringToDate("""$dayOfMonth/${monthOfYear + 1}/$year""")
+            binding.viewmodel!!.user.value?.birthdayDate = LongConverter.stringToDate("""$dayOfMonth/${monthOfYear + 1}/$year""")
 
         }, year, month, day)
         dpd.show()
@@ -105,14 +116,13 @@ class SubscriptionFragment : Fragment() {
 
     fun getUserOrCurrentDate(): Calendar {
         val cal = Calendar.getInstance()
-        viewModel.user.value?.birthdayDate?.let { cal.time = Date(it) }
+        binding.viewmodel!!.user.value?.birthdayDate?.let { cal.time = Date(it) }
         return cal
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(SubscriptionViewModel::class.java)
-        // TODO: Use the ViewModel
     }
 
 }

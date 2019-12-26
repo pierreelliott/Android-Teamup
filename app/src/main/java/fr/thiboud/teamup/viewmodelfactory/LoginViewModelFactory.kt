@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import fr.thiboud.teamup.database.UserDao
+import fr.thiboud.teamup.viewmodel.ListViewModel
 import fr.thiboud.teamup.viewmodel.LoginViewModel
 import fr.thiboud.teamup.viewmodel.SubscriptionViewModel
 
@@ -19,6 +20,9 @@ class LoginViewModelFactory (
         }
         if (modelClass.isAssignableFrom(SubscriptionViewModel::class.java)) {
             return SubscriptionViewModel(dataSource, application) as T
+        }
+        if (modelClass.isAssignableFrom(ListViewModel::class.java)) {
+            return ListViewModel(dataSource, application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

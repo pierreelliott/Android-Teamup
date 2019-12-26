@@ -162,7 +162,8 @@
                         android:hint="@string/sub_age"
                         android:inputType="date"
                         android:focusable="false"
-                        android:text="@={LongConverter.dateToString(viewmodel.user.birthdayDate)}" />
+                        app:userDate="@{viewmodel.user}"/>
+<!--                        android:text="@={LongConverter.dateToString(viewmodel.user.birthdayDate)}"-->
 
                 </com.google.android.material.textfield.TextInputLayout>
 

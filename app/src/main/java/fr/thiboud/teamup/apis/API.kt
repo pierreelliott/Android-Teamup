@@ -68,3 +68,16 @@ open class APIItem(private val _name: String, private val _imageURL: String) {
         get() = _name
         set(value) {}
 }
+
+fun createRetrofitObject(api_path: String): Retrofit {
+    val moshi = Moshi.Builder()
+        .add(KotlinJsonAdapterFactory())
+        .build()
+    val retrofit = Retrofit.Builder()
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .addCallAdapterFactory(CoroutineCallAdapterFactory())
+        .baseUrl(api_path)
+        .build()
+
+    return retrofit
+}
