@@ -28,9 +28,6 @@ class ItemViewModel(
     init {
         Log.i("ListViewModel", "created")
         _breed.value = breeds
-        coroutineScope.launch {
-            _breed.value!!.loadImage()
-        }
     }
 
 

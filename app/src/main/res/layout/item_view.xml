@@ -22,8 +22,8 @@
 
             <ImageView
                 android:id="@+id/breed_image"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"
                 app:breedImage="@{breed.image}"

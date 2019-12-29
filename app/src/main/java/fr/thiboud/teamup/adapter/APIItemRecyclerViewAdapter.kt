@@ -62,7 +62,7 @@ class APIItemRecyclerViewAdapter(
         fun bind(item: Breeds, lifecycleOwner: LifecycleOwner) {
             binding.breed = item
             binding.executePendingBindings()
-            if(binding.breed.image.value == null) {
+            if(binding.breed?.image?.value == null) {
                 coroutineScope.launch {
                     binding.breed?.loadImage()
                 }

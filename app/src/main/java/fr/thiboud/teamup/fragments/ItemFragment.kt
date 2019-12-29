@@ -66,7 +66,9 @@ class ItemFragment : Fragment() {
         val frag = this
 
         coroutineScope.launch {
-            binding.viewmodel?.breed?.value?.loadImage()
+            if(binding.viewmodel?.breed?.value?.image?.value == null) {
+                binding.viewmodel?.breed?.value?.loadImage()
+            }
 
             binding.viewmodel?.breed?.value?.image?.observe(frag, Observer {
                 binding.breedImage.setBreedImage(it)
