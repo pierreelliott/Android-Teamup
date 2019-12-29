@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.databinding.BindingAdapter
@@ -39,7 +40,8 @@ object LongConverter {
     }
 
     @JvmStatic
-    fun stringToDate(        value: String
+    fun stringToDate(
+        value: String
     ): Long {
         val f = SimpleDateFormat("dd/MM/yyyy")
         val d = f.parse(value)
@@ -75,6 +77,15 @@ class SubscriptionFragment : Fragment() {
 
         binding.viewmodel = viewModel
 
+        val adapter = ArrayAdapter.createFromResource(binding.root.context,
+            R.array.country_list, android.R.layout.simple_spinner_item)
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        // Apply the adapter to the spinner
+        binding.countrySpinner.adapter = adapter
+
+//        binding.
+
         binding.tiAge.setOnClickListener {
             clickDatePicker()
         }
@@ -97,7 +108,7 @@ class SubscriptionFragment : Fragment() {
 
     fun navigateToLogin(userId: Long) {
         this.findNavController().navigate(
-            SubscriptionFragmentDirections.actionSubscriptionFragmentToItemFragment()     //actionSubscriptionFragmentToChoiceFragment(userId)
+            SubscriptionFragmentDirections.actionSubscriptionFragmentToLoginFragment()
         )
     }
 

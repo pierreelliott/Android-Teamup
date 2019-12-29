@@ -2,13 +2,18 @@ package fr.thiboud.teamup.viewmodel
 
 import android.app.Application
 import android.util.Log
+import android.util.Patterns
+import android.view.View
+import android.widget.AdapterView
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import fr.thiboud.teamup.R
 import fr.thiboud.teamup.database.UserDao
 import fr.thiboud.teamup.model.User
+import fr.thiboud.teamup.utils.Hash
 import kotlinx.coroutines.*
+
 
 class SubscriptionViewModel(
     private val database: UserDao,
@@ -27,9 +32,7 @@ class SubscriptionViewModel(
     }
 
     private fun initializeUser() {
-        uiScope.launch {
-            _user.value = User()
-        }
+        _user.value = User()
     }
 
     private suspend fun insert(user: User): Long {
@@ -53,7 +56,9 @@ class SubscriptionViewModel(
         uiScope.launch {
             val user = user.value ?: return@launch
 
-            if(user.login.isNullOrBlank() || user.password.isNullOrBlank() || user.lastname.isNullOrBlank() || user.firstname.isNullOrBlank()) {
+            if(user.login.isNullOrBlank() || user.password.isNullOrBlank() || user.lastname.isNullOrBlank()
+                || user.firstname.isNullOrBlank() || user.email.isNullOrBlank() || user.address.isNullOrBlank()
+                || user.city.isNullOrBlank() || user.country.isNullOrBlank()) {
                 _error.value = getApplication<Application>().getString(R.string.ERR_SUBSCRIPTION_FIELDS_EMPTY)
                 return@launch
             }
@@ -62,6 +67,13 @@ class SubscriptionViewModel(
                 _error.value = getApplication<Application>().getString(R.string.ERR_SUBSCRIPTION_LOGIN_ALREADY_EXISTS)
                 return@launch
             }
+
+            if(!isEmailValid(user.email)) {
+                _error.value = getApplication<Application>().getString(R.string.ERR_SUBSCRIPTION_EMAIL_FORMAT_INVALID)
+                return@launch
+            }
+
+            user.password = Hash.md5(user.password!!)
 
             val userId = insert(user)
 
@@ -76,8 +88,32 @@ class SubscriptionViewModel(
         }
     }
 
+    private fun isEmailValid(email: CharSequence?): Boolean {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
     private val _error = MutableLiveData<String>()
 
     val error: LiveData<String>
         get() = _error
+
+    val countryClicksListener = object : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+
+        }
+
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            _user.value?.country = parent?.getItemAtPosition(position) as String
+        }
+    }
+
+    val genderClicksListener = object : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+
+        }
+
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            _user.value?.gender = parent?.getItemAtPosition(position) as String
+        }
+    }
 }

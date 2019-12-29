@@ -34,6 +34,15 @@ data class User(@PrimaryKey(autoGenerate = true)
                 @ColumnInfo(name = "firstname")
                 private var _firstname: String? = "",
 
+                @ColumnInfo(name = "address")
+                private var _address: String? = "",
+
+                @ColumnInfo(name = "city")
+                private var _city: String? = "",
+
+                @ColumnInfo(name = "country")
+                private var _country: String? = "",
+
                 @ColumnInfo(name = "birthday_date")
                 private var _birthdayDate: Long = 0,
 
@@ -84,6 +93,27 @@ data class User(@PrimaryKey(autoGenerate = true)
             notifyPropertyChanged(BR.firstname)
         }
 
+    var address: String?
+        @Bindable get() = _address
+        set(value) {
+            _address = value
+            notifyPropertyChanged(BR.address)
+        }
+
+    var city: String?
+        @Bindable get() = _city
+        set(value) {
+            _city = value
+            notifyPropertyChanged(BR.city)
+        }
+
+    var country: String?
+        @Bindable get() = _country
+        set(value) {
+            _country = value
+            notifyPropertyChanged(BR.country)
+        }
+
 
     var birthdayDate: Long
         @Bindable get() = _birthdayDate
@@ -106,6 +136,9 @@ data class User(@PrimaryKey(autoGenerate = true)
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
         parcel.readLong(),
         parcel.readString()
     )
@@ -117,6 +150,9 @@ data class User(@PrimaryKey(autoGenerate = true)
         parcel.writeString(password)
         parcel.writeString(lastname)
         parcel.writeString(firstname)
+        parcel.writeString(address)
+        parcel.writeString(city)
+        parcel.writeString(country)
         parcel.writeLong(birthdayDate)
         parcel.writeString(gender)
     }

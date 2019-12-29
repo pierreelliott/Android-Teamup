@@ -9,6 +9,7 @@ import fr.thiboud.teamup.R
 
 import fr.thiboud.teamup.database.UserDao
 import fr.thiboud.teamup.model.User
+import fr.thiboud.teamup.utils.Hash
 import kotlinx.coroutines.*
 
 class LoginViewModel(
@@ -79,7 +80,7 @@ class LoginViewModel(
             val user = user.value ?: return@launch
 
             // TODO Alert "wrong login/password"
-            if(user.login.isNullOrEmpty() || user.password.isNullOrEmpty()) {
+            if(user.login.isNullOrBlank() || user.password.isNullOrBlank()) {
                 _error.value = getApplication<Application>().getString(R.string.ERR_LOGIN_WRONG_LOGIN_AND_PASSWORD)
                 return@launch
             }
@@ -90,6 +91,8 @@ class LoginViewModel(
             }
 
             // FIXME Not secure
+            user.password = Hash.md5(user.password!!)
+
             if(!user.password.equals(userDB?.password)) {
                 _error.value = getApplication<Application>().getString(R.string.ERR_LOGIN_WRONG_LOGIN_AND_PASSWORD)
                 _user.value?.password = ""

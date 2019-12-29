@@ -55,12 +55,30 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/ev_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_sub_header_identifiers">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/ti_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/sub_email"
+                        android:inputType="textEmailAddress"
+                        android:text="@={viewmodel.user.email}"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/ev_login"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toBottomOf="@id/ev_email">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/ti_login"
@@ -124,7 +142,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/sub_name"
-                        android:inputType="text"
+                        android:inputType="textPersonName"
                         android:text="@={viewmodel.user.lastname}" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -142,7 +160,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/sub_firstname"
-                        android:inputType="text"
+                        android:inputType="textPersonName"
                         android:text="@={viewmodel.user.firstname}" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -153,7 +171,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/ev_name">
+                    app:layout_constraintTop_toBottomOf="@id/ev_firstname">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/ti_age"
@@ -162,8 +180,102 @@
                         android:hint="@string/sub_age"
                         android:inputType="date"
                         android:focusable="false"
-                        app:userDate="@{viewmodel.user}"/>
-<!--                        android:text="@={LongConverter.dateToString(viewmodel.user.birthdayDate)}"-->
+                        android:text="@={LongConverter.dateToString(viewmodel.user.birthdayDate)}"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/ev_gender"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ev_age">
+
+                    <Spinner
+                        android:id="@+id/gender_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/genders"
+                        android:layout_marginTop="15dp"
+                        tools:setOnItemSelectedListener="@{viewmodel.genderClicksListener}"
+                        />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ly_localisation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="50dp"
+                app:layout_constraintTop_toBottomOf="@id/ly_identity">
+
+                <TextView
+                    android:id="@+id/tv_sub_header_localisation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="20sp"
+                    android:textAlignment="textStart"
+                    android:text="@string/sub_localisation"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/ev_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_sub_header_localisation">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/ti_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/sub_address"
+                        android:inputType="textCapWords"
+                        android:text="@={viewmodel.user.address}"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/ev_city"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ev_address">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/ti_city"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/sub_city"
+                        android:inputType="textAutoComplete"
+                        android:text="@={viewmodel.user.city}"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/ev_country"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ev_city">
+
+                    <Spinner
+                        android:id="@+id/country_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/country_list"
+                        android:layout_marginTop="15dp"
+                        tools:setOnItemSelectedListener="@{viewmodel.countryClicksListener}"
+                        />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -177,7 +289,7 @@
                 android:onClick="@{() -> viewmodel.onValidateSubscription()}"
                 android:text="@string/sub_button_subscribe"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ly_identity" />
+                app:layout_constraintTop_toBottomOf="@id/ly_localisation" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

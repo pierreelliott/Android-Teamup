@@ -23,8 +23,8 @@
         android:label="subscription_fragment"
         tools:layout="@layout/subscription_fragment">
         <action
-            android:id="@+id/action_subscriptionFragment_to_itemFragment"
-            app:destination="@+id/itemFragment" />
+            android:id="@+id/action_subscriptionFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/choiceFragment"
