@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import fr.thiboud.teamup.R
@@ -16,8 +18,13 @@ import fr.thiboud.teamup.databinding.ItemViewBinding
 import fr.thiboud.teamup.fragments.ListFragment.OnListFragmentInteractionListener
 import fr.thiboud.teamup.fragments.dummy.DummyContent.DummyItem
 import fr.thiboud.teamup.model.User
+import fr.thiboud.teamup.utils.setBreedImage
 
 import kotlinx.android.synthetic.main.item_view.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 /**
  * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
@@ -25,47 +32,46 @@ import kotlinx.android.synthetic.main.item_view.view.*
  */
 class APIItemRecyclerViewAdapter(
     //private val mValues: List<User>,
-    private val mListener: OnListFragmentInteractionListener?
+    private val mListener: OnListFragmentInteractionListener,
+    private val lifecycleOwner: LifecycleOwner
 ) : ListAdapter<Breeds, APIItemRecyclerViewAdapter.ViewHolder>(UserDiffCallback()) {
 
     // FIXME
-    private val mOnClickListener: UserListener = UserListener { id: String -> Log.d("ID", """ID: $id""") }
+    private val mOnClickListener: ItemListener
 
-//    init {
-//        mOnClickListener = View.OnClickListener { v ->
-//            val item = v.tag as DummyItem
-//            // Notify the active callbacks interface (the activity, if the fragment is attached to
-//            // one) that an item has been selected.
-//            mListener?.onListFragmentInteraction(item)
-//        }
-//    }
+    init {
+        mOnClickListener = ItemListener { breed ->
+            // Notify the active callbacks interface (the activity, if the fragment is attached to
+            // one) that an item has been selected.
+            mListener.onListFragmentInteraction(breed)
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)
-//        val view = LayoutInflater.from(parent.context)
-//            .inflate(R.layout.item_view, parent, false)
-//        return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position)!!, mOnClickListener)
-
-//        val item = mValues[position]
-//        holder.mIdView.text = item.id
-//        holder.mContentView.text = item.content
-//
-//        with(holder.mView) {
-//            tag = item
-//            setOnClickListener(mOnClickListener)
-//        }
+        holder.bind(getItem(position)!!, lifecycleOwner)
     }
 
     class ViewHolder private constructor(val binding: ItemViewBinding) : RecyclerView.ViewHolder(binding.root){
 
-        fun bind(item: Breeds, clickListener: UserListener) {
+        private val coroutineScope = CoroutineScope(Job() + Dispatchers.Main )
+
+        fun bind(item: Breeds, lifecycleOwner: LifecycleOwner) {
             binding.breed = item
-            binding.clickListener = clickListener
             binding.executePendingBindings()
+            if(binding.breed.image.value == null) {
+                coroutineScope.launch {
+                    binding.breed?.loadImage()
+                }
+            }
+            binding.breed?.image?.observe(lifecycleOwner, Observer {
+                it?.let {
+                    binding.breedImage.setBreedImage(it)
+                }
+            })
         }
 
         companion object {
@@ -88,6 +94,6 @@ class APIItemRecyclerViewAdapter(
     }
 }
 
-class UserListener(val clickListener: (userid: String) -> Unit) {
-    fun onClick(user: Breeds) = clickListener(user.id)
+class ItemListener(val clickListener: (breed: Breeds) -> Unit) {
+    fun onClick(breed: Breeds) = clickListener(breed)
 }

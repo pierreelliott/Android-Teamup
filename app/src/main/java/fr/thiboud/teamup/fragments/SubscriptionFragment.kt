@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import android.widget.Toast
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.InverseMethod
@@ -21,9 +20,8 @@ import fr.thiboud.teamup.R
 import fr.thiboud.teamup.database.UserDB
 import fr.thiboud.teamup.databinding.SubscriptionFragmentBinding
 import fr.thiboud.teamup.model.User
-import fr.thiboud.teamup.viewmodel.LoginViewModel
 import fr.thiboud.teamup.viewmodel.SubscriptionViewModel
-import fr.thiboud.teamup.viewmodelfactory.LoginViewModelFactory
+import fr.thiboud.teamup.viewmodelfactory.ViewModelFactory
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -69,7 +67,7 @@ class SubscriptionFragment : Fragment() {
     ): View? {
         val application = requireNotNull(this.activity).application
         val dataSource = UserDB.getInstance(application).userDao
-        val viewModelFactory = LoginViewModelFactory(dataSource, application)
+        val viewModelFactory = ViewModelFactory(dataSource, application)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(SubscriptionViewModel::class.java)
 
         binding = DataBindingUtil.inflate(inflater, R.layout.subscription_fragment,

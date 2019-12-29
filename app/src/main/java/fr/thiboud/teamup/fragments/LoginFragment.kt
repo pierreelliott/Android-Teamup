@@ -15,7 +15,7 @@ import fr.thiboud.teamup.R
 import fr.thiboud.teamup.database.UserDB
 import fr.thiboud.teamup.databinding.FragmentLoginBinding
 import fr.thiboud.teamup.viewmodel.LoginViewModel
-import fr.thiboud.teamup.viewmodelfactory.LoginViewModelFactory
+import fr.thiboud.teamup.viewmodelfactory.ViewModelFactory
 
 class LoginFragment : Fragment() {
 
@@ -29,7 +29,7 @@ class LoginFragment : Fragment() {
     ): View? {
         val application = requireNotNull(this.activity).application
         val dataSource = UserDB.getInstance(application).userDao
-        val viewModelFactory = LoginViewModelFactory(dataSource, application)
+        val viewModelFactory = ViewModelFactory(dataSource, application)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(LoginViewModel::class.java)
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login,
@@ -62,7 +62,7 @@ class LoginFragment : Fragment() {
 
     fun onNavigateToChoice(userId: Long) {
         this.findNavController().navigate(
-            LoginFragmentDirections.actionLoginFragmentToItemFragment()    //actionLoginFragmentToChoiceFragment(userId)
+            LoginFragmentDirections.actionLoginFragmentToItemFragment()
         )
     }
 

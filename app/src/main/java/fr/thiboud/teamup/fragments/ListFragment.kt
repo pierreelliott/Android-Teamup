@@ -1,40 +1,28 @@
 package fr.thiboud.teamup.fragments
 
 import android.content.Context
+import android.graphics.Movie
 import android.os.Bundle
-import androidx.core.net.toUri
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import fr.thiboud.teamup.R
 import fr.thiboud.teamup.adapter.APIItemRecyclerViewAdapter
-import fr.thiboud.teamup.adapter.UserListener
 import fr.thiboud.teamup.apis.Breeds
 import fr.thiboud.teamup.database.UserDB
-import fr.thiboud.teamup.database.UserDao
 import fr.thiboud.teamup.databinding.FragmentItemListBinding
-
-import fr.thiboud.teamup.fragments.dummy.DummyContent
-import fr.thiboud.teamup.fragments.dummy.DummyContent.DummyItem
-import fr.thiboud.teamup.model.User
+import fr.thiboud.teamup.utils.RecyclerTouchListener
 import fr.thiboud.teamup.viewmodel.ListViewModel
-import fr.thiboud.teamup.viewmodelfactory.LoginViewModelFactory
+import fr.thiboud.teamup.viewmodelfactory.ViewModelFactory
 import kotlinx.coroutines.*
-import java.text.SimpleDateFormat
-import java.util.*
+
 
 /**
  * A fragment representing a list of Items.
@@ -59,45 +47,62 @@ class ListFragment : Fragment() {
         val application = requireNotNull(this.activity).application
 
         val dataSource = UserDB.getInstance(application).userDao
-        val viewModelFactory = LoginViewModelFactory(dataSource, application)
+        val viewModelFactory = ViewModelFactory(dataSource, application)
         val viewModel = ViewModelProviders.of(this, viewModelFactory).get(ListViewModel::class.java)
 
         binding.viewmodel = viewModel
         binding.lifecycleOwner = this
 
-        val adapter = APIItemRecyclerViewAdapter(listener)
-//        val adapter = APIItemRecyclerViewAdapter(UserListener { userId ->
-//            Toast.makeText(this.context,"UserID '$userId' clicked",Toast.LENGTH_SHORT).show()
-//        })
+//        val adapter = APIItemRecyclerViewAdapter(listener)
+        val adapter = APIItemRecyclerViewAdapter(object : OnListFragmentInteractionListener {
+            override fun onListFragmentInteraction(item: Breeds?) {
+                item?.let { navigateToDetails(it) }
+            }
+        }, viewLifecycleOwner)
         binding.list.adapter = adapter
+
+        binding.list.addOnItemTouchListener(
+            RecyclerTouchListener(
+                binding.root.context,
+                binding.list,
+                object : RecyclerTouchListener.ClickListener {
+                    override fun onClick(view: View?, position: Int) {
+                        val breed: Breeds? = binding.viewmodel?.listItems?.value?.get(position)
+                        breed?.let { navigateToDetails(it) }
+                    }
+
+                    override fun onLongClick(view: View?, position: Int) {}
+                })
+        )
 
         coroutineScope.launch {
             viewModel.listItems.observe(viewLifecycleOwner, Observer {
+                if(binding.progressBar.visibility == View.VISIBLE) {
+                    binding.progressBar.visibility = View.GONE
+                    binding.list.visibility = View.VISIBLE
+                }
                 it?.let {
                     adapter.submitList(it)
                 }
+
+//                coroutineScope.launch {
+//                    withContext(Dispatchers.IO) {
+//                        binding.viewmodel?.listItems?.value?.forEach {
+//                            it.loadImage()
+//                        }
+//                    }
+//                }
             })
         }
 
 
         return binding.root
+    }
 
-//        val view = inflater.inflate(R.layout.fragment_item_list, container, false)
-//
-//        // Set the adapter
-//        if (view is RecyclerView) {
-//            with(view) {
-//                layoutManager = when {
-//                    columnCount <= 1 -> LinearLayoutManager(context)
-//                    else -> GridLayoutManager(context, columnCount)
-//                }
-//                adapter = APIItemRecyclerViewAdapter(
-//                    DummyContent.ITEMS,
-//                    listener
-//                )
-//            }
-//        }
-//        return view
+    private fun navigateToDetails(breed: Breeds) {
+        this.findNavController().navigate(
+            ListFragmentDirections.actionItemFragmentToItemFragment2(breed)
+        )
     }
 
     override fun onAttach(context: Context) {
@@ -114,6 +119,10 @@ class ListFragment : Fragment() {
         listener = null
     }
 
+    fun reloadItemView(viewholder: APIItemRecyclerViewAdapter.ViewHolder) {
+
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -127,7 +136,7 @@ class ListFragment : Fragment() {
      */
     interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: DummyItem?)
+        fun onListFragmentInteraction(item: Breeds?)
     }
 
 }

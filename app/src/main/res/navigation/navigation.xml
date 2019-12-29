@@ -15,7 +15,7 @@
             app:destination="@id/subscriptionFragment" />
         <action
             android:id="@+id/action_loginFragment_to_itemFragment"
-            app:destination="@id/itemFragment" />
+            app:destination="@id/listFragment" />
     </fragment>
     <fragment
         android:id="@+id/subscriptionFragment"
@@ -36,7 +36,20 @@
             app:argType="long" />
     </fragment>
     <fragment
-        android:id="@+id/itemFragment"
+        android:id="@+id/listFragment"
         android:name="fr.thiboud.teamup.fragments.ListFragment"
-        android:label="ItemFragment" />
+        android:label="ListFragment">
+        <action
+            android:id="@+id/action_itemFragment_to_itemFragment2"
+            app:destination="@id/itemFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/itemFragment"
+        android:name="fr.thiboud.teamup.fragments.ItemFragment"
+        android:label="fragment_item"
+        tools:layout="@layout/fragment_item" >
+        <argument
+            android:name="BREED"
+            app:argType="fr.thiboud.teamup.apis.Breeds" />
+    </fragment>
 </navigation>

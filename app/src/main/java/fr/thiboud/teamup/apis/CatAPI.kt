@@ -1,21 +1,14 @@
 package fr.thiboud.teamup.apis
 
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Json
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Deferred
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Headers
-import retrofit2.http.Path
 import retrofit2.http.Query
-import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 const val CAT_URL = "https://api.thecatapi.com/v1/"
 const val CAT_API_KEY = "0a047a5a-df96-43d2-8caa-c9b4af473213"
@@ -37,20 +30,26 @@ interface MyCatApiService {
 
     @Headers("""x-api-key: $CAT_API_KEY""")
     @GET("images/search")
-    fun getImage(@Query("breed_id") breedId: String): Deferred<Image>
+    fun getImage(@Query("breed_id") breedId: String?): Deferred<List<Image>>
 }
 
 data class Breeds(
-    val id: String,
-    val name: String,
-    val description: String
-) {
+    val id: String?,
+    val name: String?,
+    val description: String?
+): Parcelable {
 
     val imgURL: String = """https://api.thecatapi.com/v1/images/search?api_key=$CAT_API_KEY&breed_id=$id"""
 
     private val _image = MutableLiveData<Image>()
     val image: LiveData<Image>
         get() = _image
+
+    constructor(parcel: Parcel) : this(
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString()
+    )
 
     fun setImg(img: Image) {
         _image.value = img
@@ -59,9 +58,29 @@ data class Breeds(
     suspend fun loadImage() {
         val breedImageDeferred = CatAPI.retrofitService.getImage(this.id)
         try {
-            this.setImg(breedImageDeferred.await())
+            this.setImg(breedImageDeferred.await()[0])
         } catch (e: Exception) {
 
+        }
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
+        parcel.writeString(name)
+        parcel.writeString(description)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Breeds> {
+        override fun createFromParcel(parcel: Parcel): Breeds {
+            return Breeds(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Breeds?> {
+            return arrayOfNulls(size)
         }
     }
 }
@@ -73,17 +92,3 @@ data class Image(
     val width: String,
     val height: String
 )
-
-//  =============== Viewmodel ================
-
-//private fun getMarsRealEstateProperties() {
-//    coroutineScope.launch {
-//        val getPropertiesDeferred = MyApi.retrofitService.getProperties()
-//        try {
-//            val listResult = getPropertiesDeferred.await()
-//            _response.value = "Success: ${listResult.size} Mars properties retrieved"
-//        } catch (e: Exception) {
-//            _response.value = "Failure: ${e.message}"
-//        }
-//    }
-//}

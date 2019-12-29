@@ -10,14 +10,32 @@
             type="fr.thiboud.teamup.viewmodel.ListViewModel" />
     </data>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
-        android:name="fr.thiboud.teamup.fragments.ItemFragment"
+    <LinearLayout
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutManager="LinearLayoutManager"
-        tools:context=".fragments.ListFragment"
-        tools:listitem="@layout/item_view" />
+        android:orientation="horizontal">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:indeterminate="true"
+            android:padding="10dp"
+            android:visibility="visible" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list"
+            android:name="fr.thiboud.teamup.fragments.ItemFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:layoutManager="LinearLayoutManager"
+            tools:context=".fragments.ListFragment"
+            tools:listitem="@layout/item_view" />
+
+    </LinearLayout>
+
+
 
     <!--<androidx.coordinatorlayout.widget.CoordinatorLayout
         style="@style/AppThemeAppBar"

@@ -54,7 +54,7 @@ class ListViewModel(
                 imgLoaderScope.launch {
                     val breedImageDeferred = CatAPI.retrofitService.getImage(it.id)
                     try {
-                        it.setImg(breedImageDeferred.await())
+                        it.setImg(breedImageDeferred.await()[0])
 //                        _listItems.value?.add(it)
                     } catch (e: Exception) {
 
